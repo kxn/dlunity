@@ -36,14 +36,17 @@ class UnityHubLink:
         self.version = m[1]
         self.hash = m[2]
         self.platform = platform
-    def get_init_file_url(self):
-        return "%sunity-%s-%s.ini" % (self.get_base_url() , self.version, self.platform)
+    def get_ini_file_url(self):
+        return self.get_base_url() + self.get_ini_file_name()
+    def get_ini_file_name(self):
+        return "unity-%s-%s.ini" % (self.version, self.platform)
     def get_base_url(self):
-        return "https://download.unitychina.cn/download_unity/%s/" % self.hash
+        return "https://download.unity3d.com/download_unity/%s/" % self.hash
     def get_file_list(self):
         result = []
-        with requests.get(self.get_init_file_url(), allow_redirects=True) as r:
+        with requests.get(self.get_ini_file_url(), allow_redirects=True) as r:
             r.raise_for_status()
+            open(self.get_ini_file_name(),"w").write(r.text)
             for l in r.text.split("\n"):
                 if l.startswith("url="):
                     url = l[4:]    
